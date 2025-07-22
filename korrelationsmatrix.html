@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Know-Diagramm</title>
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .graph { margin-bottom: 50px; }
+        .relation { margin: 20px 0; padding: 10px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <div class="graph">
+        <h1>Know-Diagramm der Prozessbeziehungen</h1>
+        <html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 1000px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "Gef\u00fcge- / Werkstoffeigenschaften", "label": "Gef\u00fcge- / Werkstoffeigenschaften", "shape": "dot", "size": 30}, {"color": "#97c2fc", "id": "Reibung / Schmierstoff", "label": "Reibung / Schmierstoff", "shape": "dot", "size": 30}, {"color": "#97c2fc", "id": "Umformkraft", "label": "Umformkraft", "shape": "dot", "size": 30}, {"color": "#97c2fc", "id": "Werkzeugtemperatur", "label": "Werkzeugtemperatur", "shape": "dot", "size": 30}, {"color": "#97c2fc", "id": "Werkst\u00fccktemperatur", "label": "Werkst\u00fccktemperatur", "shape": "dot", "size": 30}, {"color": "#97c2fc", "id": "Umformgeschwindigkeit / -zeit / -weg", "label": "Umformgeschwindigkeit / -zeit / -weg", "shape": "dot", "size": 30}, {"color": "#97c2fc", "id": "Geometrie + Verschlei\u00df", "label": "Geometrie + Verschlei\u00df", "shape": "dot", "size": 30}, {"color": "#97c2fc", "id": "Analyse der Schwankung in Prozessablauf", "label": "Analyse der Schwankung in Prozessablauf", "shape": "dot", "size": 30}]);
+                  edges = new vis.DataSet([{"from": "Gef\u00fcge- / Werkstoffeigenschaften", "label": "A2", "title": "Beziehung A2: Korrelation zwischen Gef\u00fcge und Reibung.\nDies beeinflusst die Materialstruktur.\nFormel: F = m * a", "to": "Reibung / Schmierstoff", "width": 1}, {"from": "Gef\u00fcge- / Werkstoffeigenschaften", "label": "A3", "title": "Beziehung A3: Einfluss von Gef\u00fcge auf Umformkraft.\nDies bestimmt die Kraftanwendung.\nFormel: P = F / A", "to": "Umformkraft", "width": 1}, {"from": "Gef\u00fcge- / Werkstoffeigenschaften", "label": "A4", "title": "Beziehung A4: Gef\u00fcge beeinflusst Werkzeugtemperatur.\nTemperatur steigt bei Belastung.\nFormel: Q = m * c * \u0394T", "to": "Werkzeugtemperatur", "width": 1}, {"from": "Gef\u00fcge- / Werkstoffeigenschaften", "label": "A5", "title": "Beziehung A5: Gef\u00fcge und Werkst\u00fccktemperatur korrelieren.\nW\u00e4rme\u00fcbertragung ist entscheidend.\nFormel: h = Q / A * \u0394T", "to": "Werkst\u00fccktemperatur", "width": 1}, {"from": "Gef\u00fcge- / Werkstoffeigenschaften", "label": "A6", "title": "Beziehung A6: Gef\u00fcge und Umformgeschwindigkeit.\nSchnelligkeit beeinflusst Struktur.\nFormel: v = s / t", "to": "Umformgeschwindigkeit / -zeit / -weg", "width": 1}, {"from": "Gef\u00fcge- / Werkstoffeigenschaften", "label": "A7", "title": "Beziehung A7: Gef\u00fcge und Geometrie + Verschlei\u00df.\nVerschlei\u00df h\u00e4ngt von Form ab.\nFormel: W = k * F * L", "to": "Geometrie + Verschlei\u00df", "width": 1}, {"from": "Gef\u00fcge- / Werkstoffeigenschaften", "label": "A8", "title": "Beziehung A8: Gef\u00fcge und Schwankungsanalyse.\nStabilit\u00e4t wird \u00fcberpr\u00fcft.\nFormel: \u03c3 = F / A", "to": "Analyse der Schwankung in Prozessablauf", "width": 1}, {"from": "Reibung / Schmierstoff", "label": "B2", "title": "Beziehung B2: Reibung und Umformkraft korrelieren.\nReibung erh\u00f6ht Kraftbedarf.\nFormel: \u03bc = F_r / F_n", "to": "Umformkraft", "width": 1}, {"from": "Reibung / Schmierstoff", "label": "B3", "title": "Beziehung B3: Reibung und Werkzeugtemperatur.\nHitze entsteht durch Reibung.\nFormel: Q = \u03bc * F * v", "to": "Werkzeugtemperatur", "width": 1}, {"from": "Reibung / Schmierstoff", "label": "B4", "title": "Beziehung B4: Reibung und Werkst\u00fccktemperatur.\nTemperatur steigt bei Reibung.\nFormel: T = Q / m * c", "to": "Werkst\u00fccktemperatur", "width": 1}, {"from": "Reibung / Schmierstoff", "label": "B5", "title": "Beziehung B5: Reibung und Umformgeschwindigkeit.\nGeschwindigkeit reduziert Reibung.\nFormel: v = s / t", "to": "Umformgeschwindigkeit / -zeit / -weg", "width": 1}, {"from": "Reibung / Schmierstoff", "label": "B6", "title": "Beziehung B6: Reibung und Geometrie + Verschlei\u00df.\nForm beeinflusst Verschlei\u00df.\nFormel: W = k * \u03bc * L", "to": "Geometrie + Verschlei\u00df", "width": 1}, {"from": "Reibung / Schmierstoff", "label": "B7", "title": "Beziehung B7: Reibung und Schwankungsanalyse.\nSchwankungen durch Reibung.\nFormel: \u03c3 = \u03bc * F / A", "to": "Analyse der Schwankung in Prozessablauf", "width": 1}, {"from": "Umformkraft", "label": "C2", "title": "Beziehung C2: Umformkraft und Werkzeugtemperatur.\nKraft erh\u00f6ht Temperatur.\nFormel: T = P / m * c", "to": "Werkzeugtemperatur", "width": 1}, {"from": "Umformkraft", "label": "C3", "title": "Beziehung C3: Umformkraft und Werkst\u00fccktemperatur.\nW\u00e4rme entsteht durch Kraft.\nFormel: Q = F * v", "to": "Werkst\u00fccktemperatur", "width": 1}, {"from": "Umformkraft", "label": "C4", "title": "Beziehung C4: Umformkraft und Umformgeschwindigkeit.\nSchnelligkeit beeinflusst Kraft.\nFormel: P = F * v", "to": "Umformgeschwindigkeit / -zeit / -weg", "width": 1}, {"from": "Umformkraft", "label": "C5", "title": "Beziehung C5: Umformkraft und Geometrie + Verschlei\u00df.\nForm beeinflusst Kraft.\nFormel: W = F * L", "to": "Geometrie + Verschlei\u00df", "width": 1}, {"from": "Umformkraft", "label": "C6", "title": "Beziehung C6: Umformkraft und Schwankungsanalyse.\nStabilit\u00e4t wird gepr\u00fcft.\nFormel: \u03c3 = F / A", "to": "Analyse der Schwankung in Prozessablauf", "width": 1}, {"from": "Werkzeugtemperatur", "label": "D2", "title": "Beziehung D2: Werkzeugtemperatur und Werkst\u00fccktemperatur.\nW\u00e4rme\u00fcbertragung erfolgt.\nFormel: h = Q / A * \u0394T", "to": "Werkst\u00fccktemperatur", "width": 1}, {"from": "Werkzeugtemperatur", "label": "D3", "title": "Beziehung D3: Werkzeugtemperatur und Umformgeschwindigkeit.\nTemperatur beeinflusst Geschwindigkeit.\nFormel: v = s / t", "to": "Umformgeschwindigkeit / -zeit / -weg", "width": 1}, {"from": "Werkzeugtemperatur", "label": "D4", "title": "Beziehung D4: Werkzeugtemperatur und Geometrie + Verschlei\u00df.\nVerschlei\u00df steigt mit Temperatur.\nFormel: W = k * T", "to": "Geometrie + Verschlei\u00df", "width": 1}, {"from": "Werkzeugtemperatur", "label": "D5", "title": "Beziehung D5: Werkzeugtemperatur und Schwankungsanalyse.\nTemperatur verursacht Schwankungen.\nFormel: \u03c3 = T / A", "to": "Analyse der Schwankung in Prozessablauf", "width": 1}, {"from": "Werkst\u00fccktemperatur", "label": "E2", "title": "Beziehung E2: Werkst\u00fccktemperatur und Umformgeschwindigkeit.\nGeschwindigkeit erh\u00f6ht Temperatur.\nFormel: T = v * m", "to": "Umformgeschwindigkeit / -zeit / -weg", "width": 1}, {"from": "Werkst\u00fccktemperatur", "label": "E3", "title": "Beziehung E3: Werkst\u00fccktemperatur und Geometrie + Verschlei\u00df.\nForm beeinflusst Temperatur.\nFormel: W = T * L", "to": "Geometrie + Verschlei\u00df", "width": 1}, {"from": "Werkst\u00fccktemperatur", "label": "E4", "title": "Beziehung E4: Werkst\u00fccktemperatur und Schwankungsanalyse.\nTemperatur beeinflusst Stabilit\u00e4t.\nFormel: \u03c3 = T / A", "to": "Analyse der Schwankung in Prozessablauf", "width": 1}, {"from": "Umformgeschwindigkeit / -zeit / -weg", "label": "F2", "title": "Beziehung F2: Umformgeschwindigkeit und Geometrie + Verschlei\u00df.\nSchnelligkeit verursacht Verschlei\u00df.\nFormel: W = v * k", "to": "Geometrie + Verschlei\u00df", "width": 1}, {"from": "Umformgeschwindigkeit / -zeit / -weg", "label": "F3", "title": "Beziehung F3: Umformgeschwindigkeit und Schwankungsanalyse.\nGeschwindigkeit verursacht Schwankungen.\nFormel: \u03c3 = v / t", "to": "Analyse der Schwankung in Prozessablauf", "width": 1}, {"from": "Geometrie + Verschlei\u00df", "label": "G2", "title": "Beziehung G2: Geometrie + Verschlei\u00df und Schwankungsanalyse.\nVerschlei\u00df beeinflusst Stabilit\u00e4t.\nFormel: \u03c3 = W / A", "to": "Analyse der Schwankung in Prozessablauf", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"physics": {"enabled": true, "barnesHut": {"gravitationalConstant": -3000, "centralGravity": 0.1, "springLength": 200, "springConstant": 0.05}}, "nodes": {"font": {"size": 16}}, "edges": {"font": {"size": 14}}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
+    </div>
+
+    <div class="relation">
+        <h2>Beziehung A2</h2>
+        <p>Beziehung A2: Korrelation zwischen Gefüge und Reibung.<br>Dies beeinflusst die Materialstruktur.<br>Formel: F = m * a</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung A3</h2>
+        <p>Beziehung A3: Einfluss von Gefüge auf Umformkraft.<br>Dies bestimmt die Kraftanwendung.<br>Formel: P = F / A</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung A4</h2>
+        <p>Beziehung A4: Gefüge beeinflusst Werkzeugtemperatur.<br>Temperatur steigt bei Belastung.<br>Formel: Q = m * c * ΔT</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung A5</h2>
+        <p>Beziehung A5: Gefüge und Werkstücktemperatur korrelieren.<br>Wärmeübertragung ist entscheidend.<br>Formel: h = Q / A * ΔT</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung A6</h2>
+        <p>Beziehung A6: Gefüge und Umformgeschwindigkeit.<br>Schnelligkeit beeinflusst Struktur.<br>Formel: v = s / t</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung A7</h2>
+        <p>Beziehung A7: Gefüge und Geometrie + Verschleiß.<br>Verschleiß hängt von Form ab.<br>Formel: W = k * F * L</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung A8</h2>
+        <p>Beziehung A8: Gefüge und Schwankungsanalyse.<br>Stabilität wird überprüft.<br>Formel: σ = F / A</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung B2</h2>
+        <p>Beziehung B2: Reibung und Umformkraft korrelieren.<br>Reibung erhöht Kraftbedarf.<br>Formel: μ = F_r / F_n</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung B3</h2>
+        <p>Beziehung B3: Reibung und Werkzeugtemperatur.<br>Hitze entsteht durch Reibung.<br>Formel: Q = μ * F * v</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung B4</h2>
+        <p>Beziehung B4: Reibung und Werkstücktemperatur.<br>Temperatur steigt bei Reibung.<br>Formel: T = Q / m * c</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung B5</h2>
+        <p>Beziehung B5: Reibung und Umformgeschwindigkeit.<br>Geschwindigkeit reduziert Reibung.<br>Formel: v = s / t</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung B6</h2>
+        <p>Beziehung B6: Reibung und Geometrie + Verschleiß.<br>Form beeinflusst Verschleiß.<br>Formel: W = k * μ * L</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung B7</h2>
+        <p>Beziehung B7: Reibung und Schwankungsanalyse.<br>Schwankungen durch Reibung.<br>Formel: σ = μ * F / A</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung C2</h2>
+        <p>Beziehung C2: Umformkraft und Werkzeugtemperatur.<br>Kraft erhöht Temperatur.<br>Formel: T = P / m * c</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung C3</h2>
+        <p>Beziehung C3: Umformkraft und Werkstücktemperatur.<br>Wärme entsteht durch Kraft.<br>Formel: Q = F * v</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung C4</h2>
+        <p>Beziehung C4: Umformkraft und Umformgeschwindigkeit.<br>Schnelligkeit beeinflusst Kraft.<br>Formel: P = F * v</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung C5</h2>
+        <p>Beziehung C5: Umformkraft und Geometrie + Verschleiß.<br>Form beeinflusst Kraft.<br>Formel: W = F * L</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung C6</h2>
+        <p>Beziehung C6: Umformkraft und Schwankungsanalyse.<br>Stabilität wird geprüft.<br>Formel: σ = F / A</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung D2</h2>
+        <p>Beziehung D2: Werkzeugtemperatur und Werkstücktemperatur.<br>Wärmeübertragung erfolgt.<br>Formel: h = Q / A * ΔT</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung D3</h2>
+        <p>Beziehung D3: Werkzeugtemperatur und Umformgeschwindigkeit.<br>Temperatur beeinflusst Geschwindigkeit.<br>Formel: v = s / t</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung D4</h2>
+        <p>Beziehung D4: Werkzeugtemperatur und Geometrie + Verschleiß.<br>Verschleiß steigt mit Temperatur.<br>Formel: W = k * T</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung D5</h2>
+        <p>Beziehung D5: Werkzeugtemperatur und Schwankungsanalyse.<br>Temperatur verursacht Schwankungen.<br>Formel: σ = T / A</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung E2</h2>
+        <p>Beziehung E2: Werkstücktemperatur und Umformgeschwindigkeit.<br>Geschwindigkeit erhöht Temperatur.<br>Formel: T = v * m</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung E3</h2>
+        <p>Beziehung E3: Werkstücktemperatur und Geometrie + Verschleiß.<br>Form beeinflusst Temperatur.<br>Formel: W = T * L</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung E4</h2>
+        <p>Beziehung E4: Werkstücktemperatur und Schwankungsanalyse.<br>Temperatur beeinflusst Stabilität.<br>Formel: σ = T / A</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung F2</h2>
+        <p>Beziehung F2: Umformgeschwindigkeit und Geometrie + Verschleiß.<br>Schnelligkeit verursacht Verschleiß.<br>Formel: W = v * k</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung F3</h2>
+        <p>Beziehung F3: Umformgeschwindigkeit und Schwankungsanalyse.<br>Geschwindigkeit verursacht Schwankungen.<br>Formel: σ = v / t</p>
+    </div>
+    
+    <div class="relation">
+        <h2>Beziehung G2</h2>
+        <p>Beziehung G2: Geometrie + Verschleiß und Schwankungsanalyse.<br>Verschleiß beeinflusst Stabilität.<br>Formel: σ = W / A</p>
+    </div>
+    </body></html>
